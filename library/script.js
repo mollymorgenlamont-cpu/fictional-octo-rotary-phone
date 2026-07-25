@@ -92,8 +92,12 @@ class LibraryManager {
         card.className = 'book-card';
 
         const location = book.location === 'other' ? book.otherLocation : this.getLocationLabel(book.location);
+        const coverImage = book.bookCover || 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="300"%3E%3Crect fill="%23667eea" width="200" height="300"/%3E%3Ctext x="50%" y="50%" fill="white" text-anchor="middle" dy=".3em" font-size="24" font-family="Arial"%3ENo Cover%3C/text%3E%3C/svg%3E';
 
         card.innerHTML = `
+            <div class="book-card-cover">
+                <img src="${coverImage}" alt="Cover of ${this.escapeHtml(book.title)}" class="book-cover-image">
+            </div>
             <div class="book-card-header">
                 <div class="book-title">${this.escapeHtml(book.title)}</div>
                 <div class="book-author">by ${this.escapeHtml(book.author)}</div>
@@ -107,6 +111,11 @@ class LibraryManager {
                 </div>` : ''}
                 
                 <div class="book-price">$${parseFloat(book.price).toFixed(2)}</div>
+                
+                ${book.acquisitionDate ? `<div class="book-detail">
+                    <span class="book-detail-label">Added:</span>
+                    <span class="book-detail-value">${book.acquisitionDate}</span>
+                </div>` : ''}
                 
                 ${book.publisher ? `<div class="book-detail">
                     <span class="book-detail-label">Publisher:</span>
@@ -195,10 +204,16 @@ class LibraryManager {
         document.getElementById('book-price').value = book.price;
         document.getElementById('book-publisher').value = book.publisher || '';
         document.getElementById('book-year').value = book.year || '';
+        document.getElementById('book-acquisition-date').value = book.acquisitionDate || '';
         document.getElementById('book-location').value = book.location;
         document.getElementById('book-other-location').value = book.otherLocation || '';
         document.getElementById('book-notes').value = book.notes || '';
         document.getElementById('book-type').checked = book.isWishlist;
+        
+        if (book.bookCover) {
+            document.getElementById('cover-preview').src = book.bookCover;
+            document.getElementById('cover-preview').style.display = 'block';
+        }
 
         document.getElementById('book-modal').classList.remove('hidden');
     }
@@ -215,6 +230,22 @@ class LibraryManager {
     }
 
     setupEventListeners() {
+        // Cover image preview
+        const coverInput = document.getElementById('book-cover');
+        const coverPreview = document.getElementById('cover-preview');
+
+        coverInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    coverPreview.src = event.target.result;
+                    coverPreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
         // Filter buttons
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -251,6 +282,7 @@ class LibraryManager {
             document.getElementById('modal-title').textContent = 'Add New Book';
             document.getElementById('book-form').reset();
             document.getElementById('book-type').checked = false;
+            document.getElementById('cover-preview').style.display = 'none';
             document.getElementById('book-modal').classList.remove('hidden');
         });
 
@@ -259,6 +291,7 @@ class LibraryManager {
             document.getElementById('modal-title').textContent = 'Add to Wishlist';
             document.getElementById('book-form').reset();
             document.getElementById('book-type').checked = true;
+            document.getElementById('cover-preview').style.display = 'none';
             document.getElementById('book-modal').classList.remove('hidden');
         });
 
@@ -288,10 +321,12 @@ class LibraryManager {
                 price: document.getElementById('book-price').value,
                 publisher: document.getElementById('book-publisher').value,
                 year: document.getElementById('book-year').value,
+                acquisitionDate: document.getElementById('book-acquisition-date').value,
                 location: document.getElementById('book-location').value,
                 otherLocation: document.getElementById('book-other-location').value,
                 notes: document.getElementById('book-notes').value,
-                isWishlist: document.getElementById('book-type').checked
+                isWishlist: document.getElementById('book-type').checked,
+                bookCover: document.getElementById('cover-preview').src !== 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="300"%3E%3Crect fill="%23667eea" width="200" height="300"/%3E%3Ctext x="50%" y="50%" fill="white" text-anchor="middle" dy=".3em" font-size="24" font-family="Arial"%3ENo Cover%3C/text%3E%3C/svg%3E' ? document.getElementById('cover-preview').src : ''
             };
 
             if (this.editingBookIndex !== null) {
