@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Library</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1>📚 My Personal Library</h1>
+                <p class="subtitle">A curated collection of books from around the world</p>
+            </div>
+            <nav class="nav">
+                <button class="nav-btn active" data-filter="all">All Books</button>
+                <button class="nav-btn" data-filter="owned">In Collection</button>
+                <button class="nav-btn" data-filter="wishlist">Coming Soon</button>
+                <button class="nav-btn" data-filter="locations">Locations</button>
+            </nav>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat">
+                <span class="stat-number" id="total-books">0</span>
+                <span class="stat-label">Books in Collection</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="wishlist-count">0</span>
+                <span class="stat-label">On Wishlist</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number" id="total-value">$0</span>
+                <span class="stat-label">Collection Value</span>
+            </div>
+        </div>
+
+        <!-- Add Book Form -->
+        <div class="add-book-section">
+            <button id="add-book-btn" class="btn-primary">+ Add New Book</button>
+            <button id="add-wishlist-btn" class="btn-secondary">+ Add to Wishlist</button>
+        </div>
+
+        <!-- Modal for Adding/Editing Books -->
+        <div id="book-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <h2 id="modal-title">Add New Book</h2>
+                <form id="book-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-title">Book Title *</label>
+                            <input type="text" id="book-title" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-author">Author *</label>
+                            <input type="text" id="book-author" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-isbn">ISBN</label>
+                            <input type="text" id="book-isbn" placeholder="978-0-...">
+                        </div>
+                        <div class="form-group">
+                            <label for="book-price">Price Paid ($) *</label>
+                            <input type="number" id="book-price" step="0.01" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-publisher">Publisher</label>
+                            <input type="text" id="book-publisher">
+                        </div>
+                        <div class="form-group">
+                            <label for="book-year">Year Published</label>
+                            <input type="number" id="book-year" min="1000" max="2100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-location">Current Location *</label>
+                            <select id="book-location" required>
+                                <option value="">Select a location</option>
+                                <option value="la">Los Angeles, CA</option>
+                                <option value="philly">Philadelphia, PA</option>
+                                <option value="dc">Washington, DC</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="book-other-location">Other Location</label>
+                            <input type="text" id="book-other-location" placeholder="Enter custom location">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="book-notes">Notes</label>
+                            <textarea id="book-notes" rows="3" placeholder="Condition, edition, personal notes..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group checkbox">
+                            <label for="book-type">
+                                <input type="checkbox" id="book-type">
+                                This is a wishlist item (coming soon)
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Save Book</button>
+                        <button type="button" class="btn-secondary" id="cancel-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div class="content-section">
+            <h2 id="section-title" class="section-title">My Collection</h2>
+            <div id="books-grid" class="books-grid">
+                <!-- Books will be inserted here -->
+            </div>
+            <div id="empty-state" class="empty-state">
+                <p>No books found. Start adding books to your collection!</p>
+            </div>
+        </div>
+
+        <!-- Location Tracker -->
+        <div id="location-section" class="location-section hidden">
+            <h2>Books by Location</h2>
+            <div id="location-tracker" class="location-tracker">
+                <!-- Location cards will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
